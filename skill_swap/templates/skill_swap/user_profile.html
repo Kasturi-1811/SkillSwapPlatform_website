@@ -1,37 +1,54 @@
 {% extends 'skill_swap/base.html' %}
+{% block title %}{{ profile.user.username }}'s Profile{% endblock %}
+
 {% block content %}
-<div style="display:flex; gap:20px;">
-    <div style="width:200px;">
-        {% if profile.profile_photo %}
-            <img src="{{ profile.profile_photo.url }}" alt="{{ profile.user.username }}" style="width: 100%; border-radius: 10px;">
-        {% else %}
-            <p>No photo available</p>
-        {% endif %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
+  <h2 class="mb-3 mb-md-0">{{ profile.user.username }}</h2>
+  {% if user.is_authenticated and user != profile.user %}
+  <a href="{% url 'send_swap_request' profile.user.id %}" class="btn btn-success btn-lg">
+    Request Swap
+  </a>
+  {% endif %}
+</div>
+
+<div class="d-flex flex-column flex-md-row align-items-center mb-4 gap-3">
+  {% if profile.profile_photo %}
+    <img src="{{ profile.profile_photo.url }}" alt="{{ profile.user.username }}'s Profile Photo" class="rounded-circle shadow-sm" style="width:120px; height:120px; object-fit: cover;" />
+  {% else %}
+    <div class="bg-secondary rounded-circle shadow-sm d-flex justify-content-center align-items-center" style="width:120px; height:120px;">
+      <span class="text-white fs-1">{{ profile.user.username|slice:":1"|upper }}</span>
     </div>
+  {% endif %}
+  <div>
+    <p class="mb-1"><strong>Location:</strong> {{ profile.location|default:"Not specified" }}</p>
+    <p class="mb-1"><strong>Phone:</strong> {{ profile.phone_number|default:"Not specified" }}</p>
+    <p class="mb-0"><strong>Availability:</strong> {{ profile.availability|default:"Not specified" }}</p>
+  </div>
+</div>
 
-    <div style="flex-grow:1;">
-        <h2>{{ profile.user.username }}</h2>
-        <p><b>Availability:</b> {{ profile.availability }}</p>
+<div class="mb-4">
+  <h5>Skills Offered</h5>
+  {% if profile.skills_offered.exists %}
+    <ul class="list-inline">
+      {% for skill in profile.skills_offered.all %}
+        <li class="list-inline-item badge bg-primary text-white me-1 mb-1">{{ skill.name }}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p><em>No skills offered yet.</em></p>
+  {% endif %}
+</div>
 
-        <p><b>Skills Offered:</b>
-            {% for skill in profile.skills_offered.all %}
-                {{ skill.name }}{% if not forloop.last %}, {% endif %}
-            {% empty %}
-                None
-            {% endfor %}
-        </p>
-
-        <p><b>Skills Wanted:</b>
-            {% for skill in profile.skills_wanted.all %}
-                {{ skill.name }}{% if not forloop.last %}, {% endif %}
-            {% empty %}
-                None
-            {% endfor %}
-        </p>
-
-        {% if user.is_authenticated and user != profile.user %}
-            <a href="{% url 'swap_request' profile.user.id %}"><button class="btn btn-success">Request Swap</button></a>
-        {% endif %}
-    </div>
+<div>
+  <h5>Skills Wanted</h5>
+  {% if profile.skills_wanted.exists %}
+    <ul class="list-inline">
+      {% for skill in profile.skills_wanted.all %}
+        <li class="list-inline-item badge bg-warning text-dark me-1 mb-1">{{ skill.name }}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p><em>No skills wanted yet.</em></p>
+  {% endif %}
 </div>
 {% endblock %}

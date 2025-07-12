@@ -1,0 +1,43 @@
+{% extends "skill_swap/base.html" %}
+{% block content %}
+<h2>Admin Dashboard</h2>
+
+<h3>Pending Skill Approvals</h3>
+<ul>
+  {% for skill in pending_skills %}
+    <li>{{ skill.name }} 
+      <a href="{% url 'approve_skill' skill.id %}">Approve</a> | 
+      <a href="{% url 'reject_skill' skill.id %}">Reject</a>
+    </li>
+  {% empty %}
+    <li>No skills pending approval.</li>
+  {% endfor %}
+</ul>
+
+<h3>Banned Users</h3>
+<ul>
+  {% for profile in banned_users %}
+    <li>{{ profile.user.username }} 
+      <a href="{% url 'unban_user' profile.user.id %}">Unban</a>
+    </li>
+  {% empty %}
+    <li>No banned users.</li>
+  {% endfor %}
+</ul>
+
+<h3>Swaps Pending</h3>
+<ul>
+  {% for swap in swaps_pending %}
+    <li>{{ swap.from_user.username }} → {{ swap.to_user.username }} ({{ swap.offered_skill.name }} for {{ swap.requested_skill.name }})</li>
+  {% empty %}
+    <li>No pending swaps.</li>
+  {% endfor %}
+</ul>
+
+<h3>Send Platform-wide Message</h3>
+<p><a href="{% url 'send_platform_message' %}">Send Message</a></p>
+
+<h3>Download Reports</h3>
+<p><a href="{% url 'download_report' %}">Download User Swap Report CSV</a></p>
+
+{% endblock %}

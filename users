@@ -1,16 +1,20 @@
 from django.contrib.auth.models import User
 from skill_swap.models import UserProfile, Skill
 
-# Create some skills first (only once needed)
+# Create some skills (only once needed)
 python_skill, _ = Skill.objects.get_or_create(name='Python')
 cooking_skill, _ = Skill.objects.get_or_create(name='Cooking')
 painting_skill, _ = Skill.objects.get_or_create(name='Painting')
 guitar_skill, _ = Skill.objects.get_or_create(name='Guitar')
 photography_skill, _ = Skill.objects.get_or_create(name='Photography')
 spanish_skill, _ = Skill.objects.get_or_create(name='Spanish')
+dancing_skill, _ = Skill.objects.get_or_create(name='Dancing')
+gardening_skill, _ = Skill.objects.get_or_create(name='Gardening')
+writing_skill, _ = Skill.objects.get_or_create(name='Writing')
+javascript_skill, _ = Skill.objects.get_or_create(name='JavaScript')
 
 # Helper function to create users and profiles
-def create_user_with_profile(username, email, password, offered_skills, wanted_skills):
+def create_user_with_profile(username, email, password, offered_skills, wanted_skills, location, phone_number):
     user, created = User.objects.get_or_create(username=username, defaults={'email': email})
     if created:
         user.set_password(password)
@@ -23,30 +27,53 @@ def create_user_with_profile(username, email, password, offered_skills, wanted_s
         profile.skills_offered.add(skill)
     for skill in wanted_skills:
         profile.skills_wanted.add(skill)
+    profile.location = location
+    profile.phone_number = phone_number
     profile.save()
     return user, profile
 
-# Create multiple users
-create_user_with_profile(
-    username='alice', email='alice@example.com', password='testpass123',
-    offered_skills=[python_skill, photography_skill],
-    wanted_skills=[guitar_skill]
-)
+# List of user data (username, email, location, phone)
+users_data = [
+    ('user1', 'user1@example.com', 'Visakhapatnam, Andhra Pradesh', '9000000001'),
+    ('user2', 'user2@example.com', 'Vijayawada, Andhra Pradesh', '9000000002'),
+    ('user3', 'user3@example.com', 'Tirupati, Andhra Pradesh', '9000000003'),
+    ('user4', 'user4@example.com', 'Guntur, Andhra Pradesh', '9000000004'),
+    ('user5', 'user5@example.com', 'Kurnool, Andhra Pradesh', '9000000005'),
+    ('user6', 'user6@example.com', 'Nellore, Andhra Pradesh', '9000000006'),
+    ('user7', 'user7@example.com', 'Rajahmundry, Andhra Pradesh', '9000000007'),
+    ('user8', 'user8@example.com', 'Kadapa, Andhra Pradesh', '9000000008'),
+    ('user9', 'user9@example.com', 'Eluru, Andhra Pradesh', '9000000009'),
+    ('user10', 'user10@example.com', 'Anantapur, Andhra Pradesh', '9000000010'),
+]
 
-create_user_with_profile(
-    username='bob', email='bob@example.com', password='testpass123',
-    offered_skills=[guitar_skill],
-    wanted_skills=[painting_skill, spanish_skill]
-)
+# Skills combinations for users (offered_skills, wanted_skills)
+skills_data = [
+    ([python_skill, photography_skill], [guitar_skill]),
+    ([guitar_skill], [painting_skill, spanish_skill]),
+    ([cooking_skill, painting_skill], [python_skill]),
+    ([spanish_skill], [photography_skill, cooking_skill]),
+    ([dancing_skill, gardening_skill], [writing_skill]),
+    ([writing_skill], [javascript_skill, dancing_skill]),
+    ([javascript_skill, python_skill], [gardening_skill]),
+    ([gardening_skill], [photography_skill]),
+    ([painting_skill, guitar_skill], [writing_skill, spanish_skill]),
+    ([photography_skill], [python_skill, cooking_skill]),
+]
 
-create_user_with_profile(
-    username='carol', email='carol@example.com', password='testpass123',
-    offered_skills=[cooking_skill, painting_skill],
-    wanted_skills=[python_skill]
-)
+password = 'testpass123'
 
-create_user_with_profile(
-    username='dave', email='dave@example.com', password='testpass123',
-    offered_skills=[spanish_skill],
-    wanted_skills=[photography_skill, cooking_skill]
-)
+# Create the users with profiles
+for i in range(10):
+    username, email, location, phone = users_data[i]
+    offered, wanted = skills_data[i]
+    create_user_with_profile(
+        username=username,
+        email=email,
+        password=password,
+        offered_skills=offered,
+        wanted_skills=wanted,
+        location=location,
+        phone_number=phone
+    )
+
+print("10 users created with skills, location, and phone numbers.")

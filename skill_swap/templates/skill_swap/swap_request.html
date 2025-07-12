@@ -1,24 +1,47 @@
 {% extends 'skill_swap/base.html' %}
+{% block title %}Send Swap Request{% endblock %}
+{% load widget_tweaks %}
+
 {% block content %}
-<h3>Send Swap Request to {{ to_user.username }}</h3>
+<div class="container my-5" style="max-width: 600px;">
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h2 class="card-title text-center mb-4">
+        Send Swap Request to <strong>{{ to_user.username }}</strong>
+      </h2>
 
-<form method="post">
-    {% csrf_token %}
-    <div class="mb-3">
-        <label for="id_offered_skill">Choose one of your offered skills:</label>
-        {{ form.offered_skill }}
+      <form method="post" novalidate>
+        {% csrf_token %}
+
+        <div class="mb-4">
+          <label for="id_offered_skill" class="form-label fw-semibold">Your Offered Skill</label>
+          {{ form.offered_skill|add_class:"form-select" }}
+          {% if form.offered_skill.errors %}
+            <div class="text-danger small mt-1">{{ form.offered_skill.errors }}</div>
+          {% endif %}
+        </div>
+
+        <div class="mb-4">
+          <label for="id_requested_skill" class="form-label fw-semibold">Skill You Want</label>
+          {{ form.requested_skill|add_class:"form-select" }}
+          {% if form.requested_skill.errors %}
+            <div class="text-danger small mt-1">{{ form.requested_skill.errors }}</div>
+          {% endif %}
+        </div>
+
+        <div class="mb-4">
+          <label for="id_message" class="form-label fw-semibold">Message</label>
+          {{ form.message|add_class:"form-control" }}
+          {% if form.message.errors %}
+            <div class="text-danger small mt-1">{{ form.message.errors }}</div>
+          {% endif %}
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 py-2 fs-5">
+          Submit Request
+        </button>
+      </form>
     </div>
-
-    <div class="mb-3">
-        <label for="id_requested_skill">Choose one of their wanted skills:</label>
-        {{ form.requested_skill }}
-    </div>
-
-    <div class="mb-3">
-        <label for="id_message">Message:</label>
-        {{ form.message }}
-    </div>
-
-    <button type="submit" class="btn btn-primary">Send Request</button>
-</form>
+  </div>
+</div>
 {% endblock %}
