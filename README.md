@@ -1,3 +1,3 @@
-Name : Chepuri Jeevana Kasturi
-Email : jeevanakasturi@gmail.com
+Name : Chepuri Jeevana Kasturi,
+Email : jeevanakasturi@gmail.com,
 Problem Statement : Skill Swap Platform, In this platform the users can swap their skills with one another by connecting individually who want to learn specific skills and willing to teach skills.
