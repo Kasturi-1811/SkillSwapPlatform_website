@@ -1,0 +1,53 @@
+{% extends 'skill_swap/base.html' %}
+{% block content %}
+<h3>Find Skill Swappers</h3>
+
+<form method="get" class="mb-3">
+    <label>Availability:</label>
+    <select name="availability">
+        <option value="">All</option>
+        <option value="weekends" {% if request.GET.availability == "weekends" %}selected{% endif %}>Weekends</option>
+        <option value="evenings" {% if request.GET.availability == "evenings" %}selected{% endif %}>Evenings</option>
+    </select>
+    <input type="text" name="q" placeholder="Search skills..." value="{{ request.GET.q }}">
+    <button type="submit">Search</button>
+</form>
+
+<hr>
+
+{% for profile in profiles %}
+    <div style="border:1px solid #ccc; padding:10px; margin:10px; display:flex; align-items:center;">
+        {% if profile.profile_photo %}
+            <img src="{{ profile.profile_photo.url }}" width="60" height="60" style="border-radius: 50%; margin-right:15px;">
+        {% endif %}
+        <div style="flex-grow:1;">
+            <strong>{{ profile.user.username }}</strong> <br>
+            <small>Availability: {{ profile.availability }}</small> <br>
+
+            <p><b>Skills Offered:</b>
+                {% for skill in profile.skills_offered.all %}
+                    {{ skill.name }}{% if not forloop.last %}, {% endif %}
+                {% empty %}
+                    None
+                {% endfor %}
+            </p>
+
+            <p><b>Skills Wanted:</b>
+                {% for skill in profile.skills_wanted.all %}
+                    {{ skill.name }}{% if not forloop.last %}, {% endif %}
+                {% empty %}
+                    None
+                {% endfor %}
+            </p>
+        </div>
+        <div>
+            <a href="{% url 'user_profile' profile.user.id %}"><button class="btn btn-primary">View Profile</button></a>
+            {% if user.is_authenticated and user != profile.user %}
+                <br><a href="{% url 'swap_request' profile.user.id %}"><button class="btn btn-success mt-2">Request Swap</button></a>
+            {% endif %}
+        </div>
+    </div>
+{% empty %}
+    <p>No users found.</p>
+{% endfor %}
+{% endblock %}

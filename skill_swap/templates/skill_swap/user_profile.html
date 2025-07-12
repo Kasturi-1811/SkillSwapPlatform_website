@@ -1,0 +1,37 @@
+{% extends 'skill_swap/base.html' %}
+{% block content %}
+<div style="display:flex; gap:20px;">
+    <div style="width:200px;">
+        {% if profile.profile_photo %}
+            <img src="{{ profile.profile_photo.url }}" alt="{{ profile.user.username }}" style="width: 100%; border-radius: 10px;">
+        {% else %}
+            <p>No photo available</p>
+        {% endif %}
+    </div>
+
+    <div style="flex-grow:1;">
+        <h2>{{ profile.user.username }}</h2>
+        <p><b>Availability:</b> {{ profile.availability }}</p>
+
+        <p><b>Skills Offered:</b>
+            {% for skill in profile.skills_offered.all %}
+                {{ skill.name }}{% if not forloop.last %}, {% endif %}
+            {% empty %}
+                None
+            {% endfor %}
+        </p>
+
+        <p><b>Skills Wanted:</b>
+            {% for skill in profile.skills_wanted.all %}
+                {{ skill.name }}{% if not forloop.last %}, {% endif %}
+            {% empty %}
+                None
+            {% endfor %}
+        </p>
+
+        {% if user.is_authenticated and user != profile.user %}
+            <a href="{% url 'swap_request' profile.user.id %}"><button class="btn btn-success">Request Swap</button></a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

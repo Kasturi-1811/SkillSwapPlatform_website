@@ -1,0 +1,28 @@
+{% extends 'skill_swap/base.html' %}
+{% block content %}
+<h2>My Swaps</h2>
+
+<h3>Sent Requests</h3>
+<ul>
+{% for swap in sent %}
+    <li>
+        To {{ swap.to_user.username }} | Offered: {{ swap.offered_skill }} | Wanted: {{ swap.requested_skill }}
+        {% if swap.is_accepted %}✅ Accepted{% elif swap.is_rejected %}❌ Rejected{% else %}⏳ Pending{% endif %}
+    </li>
+{% empty %}
+    <li>No sent swap requests.</li>
+{% endfor %}
+</ul>
+
+<h3>Received Requests</h3>
+<ul>
+{% for swap in received %}
+    <li>
+        From {{ swap.from_user.username }} | Offered: {{ swap.offered_skill }} | Wants: {{ swap.requested_skill }}
+        {% if swap.is_accepted %}✅ Accepted{% elif swap.is_rejected %}❌ Rejected{% else %}⏳ Pending{% endif %}
+    </li>
+{% empty %}
+    <li>No received swap requests.</li>
+{% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'skill_swap/base.html' %}
+{% block content %}
+<h3>Send Swap Request to {{ to_user.username }}</h3>
+
+<form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="id_offered_skill">Choose one of your offered skills:</label>
+        {{ form.offered_skill }}
+    </div>
+
+    <div class="mb-3">
+        <label for="id_requested_skill">Choose one of their wanted skills:</label>
+        {{ form.requested_skill }}
+    </div>
+
+    <div class="mb-3">
+        <label for="id_message">Message:</label>
+        {{ form.message }}
+    </div>
+
+    <button type="submit" class="btn btn-primary">Send Request</button>
+</form>
+{% endblock %}
