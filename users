@@ -1,0 +1,52 @@
+from django.contrib.auth.models import User
+from skill_swap.models import UserProfile, Skill
+
+# Create some skills first (only once needed)
+python_skill, _ = Skill.objects.get_or_create(name='Python')
+cooking_skill, _ = Skill.objects.get_or_create(name='Cooking')
+painting_skill, _ = Skill.objects.get_or_create(name='Painting')
+guitar_skill, _ = Skill.objects.get_or_create(name='Guitar')
+photography_skill, _ = Skill.objects.get_or_create(name='Photography')
+spanish_skill, _ = Skill.objects.get_or_create(name='Spanish')
+
+# Helper function to create users and profiles
+def create_user_with_profile(username, email, password, offered_skills, wanted_skills):
+    user, created = User.objects.get_or_create(username=username, defaults={'email': email})
+    if created:
+        user.set_password(password)
+        user.save()
+    profile, created = UserProfile.objects.get_or_create(user=user, defaults={'is_public': True})
+    # Clear existing skills to avoid duplicates
+    profile.skills_offered.clear()
+    profile.skills_wanted.clear()
+    for skill in offered_skills:
+        profile.skills_offered.add(skill)
+    for skill in wanted_skills:
+        profile.skills_wanted.add(skill)
+    profile.save()
+    return user, profile
+
+# Create multiple users
+create_user_with_profile(
+    username='alice', email='alice@example.com', password='testpass123',
+    offered_skills=[python_skill, photography_skill],
+    wanted_skills=[guitar_skill]
+)
+
+create_user_with_profile(
+    username='bob', email='bob@example.com', password='testpass123',
+    offered_skills=[guitar_skill],
+    wanted_skills=[painting_skill, spanish_skill]
+)
+
+create_user_with_profile(
+    username='carol', email='carol@example.com', password='testpass123',
+    offered_skills=[cooking_skill, painting_skill],
+    wanted_skills=[python_skill]
+)
+
+create_user_with_profile(
+    username='dave', email='dave@example.com', password='testpass123',
+    offered_skills=[spanish_skill],
+    wanted_skills=[photography_skill, cooking_skill]
+)
