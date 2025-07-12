@@ -1,28 +1,83 @@
 {% extends 'skill_swap/base.html' %}
+
+{% block title %}My Swaps{% endblock %}
+
 {% block content %}
-<h2>My Swaps</h2>
+<h2 class="mb-4">My Swaps</h2>
 
-<h3>Sent Requests</h3>
-<ul>
-{% for swap in sent %}
-    <li>
-        To {{ swap.to_user.username }} | Offered: {{ swap.offered_skill }} | Wanted: {{ swap.requested_skill }}
-        {% if swap.is_accepted %}✅ Accepted{% elif swap.is_rejected %}❌ Rejected{% else %}⏳ Pending{% endif %}
-    </li>
-{% empty %}
-    <li>No sent swap requests.</li>
-{% endfor %}
-</ul>
+<div class="row">
+  <!-- Sent Requests -->
+  <div class="col-md-6 mb-4">
+    <div class="card shadow-sm">
+      <div class="card-header bg-primary text-white">
+        Sent Requests
+      </div>
+      <div class="card-body">
+        {% if sent_requests %}
+          <ul class="list-group">
+            {% for req in sent_requests %}
+              <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                <div>
+                  To <strong>{{ req.to_user.username }}</strong> <br/>
+                  Offered: <span class="badge bg-success">Guitar</span> &nbsp;
 
-<h3>Received Requests</h3>
-<ul>
-{% for swap in received %}
-    <li>
-        From {{ swap.from_user.username }} | Offered: {{ swap.offered_skill }} | Wants: {{ swap.requested_skill }}
-        {% if swap.is_accepted %}✅ Accepted{% elif swap.is_rejected %}❌ Rejected{% else %}⏳ Pending{% endif %}
-    </li>
-{% empty %}
-    <li>No received swap requests.</li>
-{% endfor %}
-</ul>
+                  Wanted: <span class="badge bg-info">{{ req.requested_skill.name }}</span>
+                </div>
+                <div>
+                  {% if req.is_accepted %}
+                    <span class="badge bg-success">Accepted</span>
+                  {% elif req.is_rejected %}
+                    <span class="badge bg-danger">Rejected</span>
+                  {% else %}
+                    <span class="badge bg-warning text-dark">Pending</span>
+                  {% endif %}
+                </div>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="text-muted">No sent swap requests.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Received Requests -->
+  <div class="col-md-6 mb-4">
+    <div class="card shadow-sm">
+      <div class="card-header bg-secondary text-white">
+        Received Requests
+      </div>
+      <div class="card-body">
+        {% if received_requests %}
+          <ul class="list-group">
+            {% for req in received_requests %}
+              <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                <div>
+                  From <strong>{{ req.from_user.username }}</strong> <br/>
+                  Offered: <span class="badge bg-success">Python</span> &nbsp;
+                  Wanted: <span class="badge bg-info">{{ req.requested_skill.name }}</span>
+                </div>
+                <div>
+                  {% if not req.is_accepted and not req.is_rejected %}
+                    <form method="post" action="{% url 'accept_swap_request' req.id %}" class="mb-0">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-sm btn-success">Accept</button>
+                    </form>
+                  {% elif req.is_accepted %}
+                    <span class="badge bg-success">Accepted</span>
+                  {% else %}
+                    <span class="badge bg-danger">Rejected</span>
+                  {% endif %}
+                </div>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="text-muted">No received swap requests.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

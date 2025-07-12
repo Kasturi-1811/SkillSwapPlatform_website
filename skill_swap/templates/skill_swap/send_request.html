@@ -1,0 +1,34 @@
+<!-- Sent Requests -->
+<div class="col-md-6 mb-4">
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+      Sent Requests
+    </div>
+    <div class="card-body">
+      {% if sent_requests %}
+        <ul class="list-group">
+          {% for req in sent_requests %}
+            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+              <div>
+                To <strong>{{ req.to_user.username }}</strong> <br/>
+                Offered: <span class="badge bg-success">Guitar</span> &nbsp; 
+                Wanted: <span class="badge bg-info">{{ req.requested_skill.name }}</span>
+              </div>
+              <div>
+                {% if req.is_accepted %}
+                  <span class="badge bg-success">Accepted</span>
+                {% elif req.is_rejected %}
+                  <span class="badge bg-danger">Rejected</span>
+                {% else %}
+                  <span class="badge bg-warning text-dark">Pending</span>
+                {% endif %}
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="text-muted">No sent swap requests.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>

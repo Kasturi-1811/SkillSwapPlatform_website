@@ -82,7 +82,31 @@ def accept_swap_request(request, request_id):
         messages.success(request, f"Swap request from {swap_request.from_user.username} accepted!")
         return HttpResponseRedirect(reverse('home'))
     return HttpResponseRedirect(reverse('home'))
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from skill_swap.models import SwapRequest
 
+@login_required
+def swap_list(request):
+    user = request.user
+
+    sent_requests = SwapRequest.objects.filter(from_user=user).order_by('-created_at')
+    received_requests = SwapRequest.objects.filter(to_user=user).order_by('-created_at')
+
+    context = {
+        'sent_requests': sent_requests,
+        'received_requests': received_requests,
+    }
+    return render(request, 'skill_swap/swap_list.html', context)
+
+
+@login_required
+def accept_swap_request(request, request_id):
+    swap = get_object_or_404(SwapRequest, pk=request_id, to_user=request.user)
+    swap.is_accepted = True
+    swap.save()
+    messages.success(request, 'Swap request accepted!')
+    return redirect('home')  # or wherever your home view is named
 
 @login_required
 def profile(request):

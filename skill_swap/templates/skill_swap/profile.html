@@ -1,10 +1,39 @@
 {% extends 'skill_swap/base.html' %}
-{% block content %}
-<h2>Your Profile</h2>
+{% load widget_tweaks %}
 
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Save</button>
-</form>
+{% block content %}
+<div class="container my-5" style="max-width: 600px;">
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+      <h2 class="mb-0">Your Profile</h2>
+    </div>
+    <div class="card-body">
+      <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+        
+        {% for field in form %}
+          <div class="mb-3">
+            <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
+              {{ field.label }}
+              {% if field.field.required %}
+                <span class="text-danger">*</span>
+              {% endif %}
+            </label>
+            {{ field|add_class:"form-control" }}
+            {% if field.help_text %}
+              <div class="form-text">{{ field.help_text }}</div>
+            {% endif %}
+            {% for error in field.errors %}
+              <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+          </div>
+        {% endfor %}
+        
+        <button type="submit" class="btn btn-primary w-100 py-2 fs-5">
+          Save Profile
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
 {% endblock %}
